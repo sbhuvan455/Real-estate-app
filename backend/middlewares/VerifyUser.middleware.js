@@ -12,7 +12,7 @@ export const verifyUser = AsyncHandler(async(req, res, next) => {
 
     if(!verifiedUser) throw new ApiError(400, "unauthorized user");
 
-    const user = await User.findById(verifiedUser).select("-password");
+    const user = await User.findById(verifiedUser.id).select("-password");
     if(!user) throw new ApiError(400, "unauthorized user");
 
     req.user = user;

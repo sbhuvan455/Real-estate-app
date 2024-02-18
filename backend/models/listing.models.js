@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const listingSchema = new mongoose.Schema({
+const listingSchema = new Schema({
     name: {
       type: String,
       required: true,
@@ -62,8 +62,8 @@ const listingSchema = new mongoose.Schema({
     },
 
     userRef: {
-      type: String,
-      required: true,
+      type: Schema.Types.ObjectId,
+      ref: "User"
     },
 
 }, { timestamps: true });
