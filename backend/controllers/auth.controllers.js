@@ -68,7 +68,7 @@ export const signin = AsyncHandler(async (req, res) => {
 
 })
 
-export const signout = AsyncHandler((req, res) => {
+export const signout = AsyncHandler(async (req, res) => {
 
     const user = req.user;
     if(user) throw new ApiError(400, "User not Authorized");
@@ -79,4 +79,68 @@ export const signout = AsyncHandler((req, res) => {
     .json(
         new ApiResponse(200, "successfully logged out", user)
     )
+})
+
+export const google = AsyncHandler(async (req, res) => {
+    const { email } = req.body;
+    if(!email) throw new ApiError(400, "Email not Provided");
+
+    const user = await User.findOne({email});
+
+    if(user) {
+        const token = jwt.sign(
+            {
+                id: user._id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRY
+            }
+        )
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+
+        res
+        .cookie('access_token', token, options)
+        .status(200)
+        .json(
+            new ApiResponse(200, "user logged in successfully", user)
+        )
+    }else{
+        const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+        const newUser = await User.create({
+            username: req.body.name.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-4),
+            email,
+            password: generatedPassword,
+            avatar: req.body.photo
+        })
+
+        if(!newUser) throw new ApiError(500, "Unable to create user")
+
+        const token = jwt.sign(
+            {
+                id: user._id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRY
+            }
+        )
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+        
+        res
+        .cookie('access_token', token, options)
+        .status(200)
+        .json(
+            new ApiResponse(200, "User Created successfully", newUser)
+        )
+    }
 })
