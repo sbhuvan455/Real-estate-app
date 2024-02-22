@@ -1,10 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { restoreDefault } from '../redux/user/userSlice.js';
 
 export default function Header() {
 
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch()
+
+  const handleRestore = () => {
+    dispatch(restoreDefault())
+  }
 
   return (
     <nav className='w-full h-20 bg-blue-100 px-4'>
@@ -26,6 +32,7 @@ export default function Header() {
           </Link>
         </div>
       </div>
+      <p onClick={handleRestore} className='cursor-pointer'>restorestate</p>
     </nav>
   )
 }

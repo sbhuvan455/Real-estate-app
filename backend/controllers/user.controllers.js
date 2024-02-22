@@ -3,6 +3,7 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
+import bcrypt from 'bcrypt'
 
 export const updateUser = AsyncHandler(async (req, res) => {
     const { username, email, password, avatar } = req.body;
@@ -15,12 +16,17 @@ export const updateUser = AsyncHandler(async (req, res) => {
             $set: {
                 username,
                 email,
-                password,
                 avatar
             },
         },
-        {new: true}
-    ).select('-password')
+        { new: true }
+    );
+
+    if(password) {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        updateUser.password = hashedPassword
+        updateUser.save()
+    }
 
     if(!updatedUser) throw new ApiError(500, "Unable to update user details");
 

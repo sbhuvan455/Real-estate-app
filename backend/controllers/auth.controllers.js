@@ -71,7 +71,8 @@ export const signin = AsyncHandler(async (req, res) => {
 export const signout = AsyncHandler(async (req, res) => {
 
     const user = req.user;
-    if(user) throw new ApiError(400, "User not Authorized");
+
+    if(!user) throw new ApiError(400, "User not Authorized");
 
     res
     .clearCookie('access_token')
@@ -123,7 +124,7 @@ export const google = AsyncHandler(async (req, res) => {
 
         const token = jwt.sign(
             {
-                id: user._id
+                id: newUser._id
             },
             process.env.JWT_SECRET,
             {
