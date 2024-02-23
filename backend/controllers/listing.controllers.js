@@ -1,3 +1,4 @@
+import { json } from "express";
 import { Listing } from "../models/listing.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -80,7 +81,7 @@ export const getListingById = AsyncHandler(async (req, res) => {
     const listingId = req.params.id;
 
     if(!listingId) throw new ApiError(400, "ListingId not provided")
-    const listing = await findById(listingId)
+    const listing = await Listing.findById(listingId)
 
     if(!listing) throw new ApiError(400, "Invalid listingId")
 

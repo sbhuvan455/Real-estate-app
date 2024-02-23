@@ -8,7 +8,7 @@ router.use(verifyUser);
 
 router.post('/update/:id', updateUser)
 router.delete('/delete/:id', deleteUser)
-router.get('/listings/:id', getUserListings)
+router.get('/listings', getUserListings)
 router.get('/:id', getUser)
 
 export default router;
